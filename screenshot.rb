@@ -7,7 +7,7 @@ trimmed_url = url.sub("https://twitter.com/", "")
 username_tweet_id = trimmed_url.split("/status/").join("_")
 
 
-driver = Selenium::WebDriver.for :chrome 
+driver = Selenium::WebDriver.for :firefox 
 driver.get url
 
 
@@ -21,8 +21,8 @@ driver.get url
 # improve this with callbacks
 sleep 20
 
-tweet = driver.find_element(:css, "div.permalink-tweet-container")
-tweet_media = driver.find_element(:css, "div.js-media-container")
+tweet = driver.find_element(:xpath, "//div[@role='main']")
+# tweet_media = driver.find_element(:css, "div.js-media-container")
 
 driver.save_screenshot("./tmp/twitter.png")
 
