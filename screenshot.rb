@@ -1,25 +1,33 @@
-# require 'selenium-webdriver'
+require 'selenium-webdriver'
 # require 'chunky_png'
 
 require "capybara/dsl"
-require "capybara/poltergeist"
+#require 'capybara-webkit'
+#require "capybara/poltergeist"
 
 # By default Capybara will try to boot a rack application
 # automatically. You might want to switch off Capybara's
 # rack server if you are running against a remote application
-Capybara.run_server = false
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, {
-    # Raise JavaScript errors to Ruby
-    js_errors: true,
-    # Additional command line options for PhantomJS
-    phantomjs_options: ['--ignore-ssl-errors=yes', '--ssl-protocol=any'],
-  })
-end
-Capybara.current_driver = :poltergeist
+# Capybara.run_server = false
+# Capybara.register_driver :poltergeist do |app|
+#   Capybara::Poltergeist::Driver.new(app, {
+#     # Raise JavaScript errors to Ruby
+#     js_errors: true,
+#     # Additional command line options for PhantomJS
+#     phantomjs_options: ['--ignore-ssl-errors=yes', '--ssl-protocol=any'],
+#   })
+# end
+# Capybara.current_driver = :poltergeist
+# Capybara.current_driver = :webkit
 
 # driver = Selenium::WebDriver.for :chrome 
 # driver.get url
+
+Capybara.register_driver :chrome do |app|
+  Capybara::Selenium::Driver.new(app, :browser => :chrome)
+end
+
+Capybara.current_driver = :chrome
 
 class Screenshot
   include Capybara::DSL
@@ -29,17 +37,11 @@ class Screenshot
     # Open page
     visit url
 
-    if page.driver.status_code == 200
-      page.driver.save_screenshot(path, :full => true)
-      puts "screenshot saved"
-    else
-      # Handle error
-      puts "there was a problem #{page.driver.status_code}"
-    end
+    page.save_screenshot(path, :full => true)
+    puts "screenshot saved"
+
   end
 end
-
-sleep 10
 
 # tweet = driver.find_element(:css, "div.permalink-tweet-container")
 # tweet_media = driver.find_element(:css, "div.js-media-container")
