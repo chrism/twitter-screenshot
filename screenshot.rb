@@ -6,11 +6,12 @@ url = ARGV[0].to_s
 trimmed_url = url.sub("https://twitter.com/", "")
 username_tweet_id = trimmed_url.split("/status/").join("_")
 
+width = 1400
+height = 768
 
 driver = Selenium::WebDriver.for :firefox 
 driver.get url
-
-
+driver.manage.window.maximize
 
 # wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
 # wait.until {
