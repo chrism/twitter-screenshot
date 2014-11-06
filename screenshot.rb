@@ -1,7 +1,7 @@
 require 'watir-webdriver'
 url = ARGV[0].to_s
 
-b = Watir::Browser.new
+b = Watir::Browser.new :chrome
 b.goto url
 b.screenshot.save './tmp/watir.png'
 
