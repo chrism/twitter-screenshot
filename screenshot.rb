@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'selenium-webdriver'
 require 'chunky_png'
 
