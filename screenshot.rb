@@ -1,15 +1,60 @@
-require 'selenium-webdriver'
-require 'chunky_png'
+# require 'selenium-webdriver'
+# require 'chunky_png'
 
+require "capybara/dsl"
+require "capybara/poltergeist"
+
+# By default Capybara will try to boot a rack application
+# automatically. You might want to switch off Capybara's
+# rack server if you are running against a remote application
+Capybara.run_server = false
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, {
+    # Raise JavaScript errors to Ruby
+    js_errors: true,
+    # Additional command line options for PhantomJS
+    phantomjs_options: ['--ignore-ssl-errors=yes', '--ssl-protocol=any'],
+  })
+end
+Capybara.current_driver = :poltergeist
+
+# driver = Selenium::WebDriver.for :chrome 
+# driver.get url
+
+class Screenshot
+  include Capybara::DSL
+
+  # Captures a screenshot of +url+ saving it to +path+.
+  def capture(url, path)
+    # Open page
+    visit url
+
+    if page.driver.status_code == 200
+      page.driver.save_screenshot(path, :full => true)
+      puts "screenshot saved"
+    else
+      # Handle error
+      puts "there was a problem #{page.driver.status_code}"
+    end
+  end
+end
+
+sleep 10
+
+# tweet = driver.find_element(:css, "div.permalink-tweet-container")
+# tweet_media = driver.find_element(:css, "div.js-media-container")
 url = ARGV[0].to_s
 
 trimmed_url = url.sub("https://twitter.com/", "")
 username_tweet_id = trimmed_url.split("/status/").join("_")
 
+screenshot = Screenshot.new
+screenshot.capture url, "./tmp/capybara.png"
 
-driver = Selenium::WebDriver.for :chrome 
-driver.get url
+# full_image = ChunkyPNG::Image.from_file("./tmp/twitter.png")
 
+# full_image.crop!(tweet.location.x + 1, tweet.location.y + 1, tweet.size.width - 2, tweet.size.height - 5)
+# full_image.save("./screenshots/#{username_tweet_id}.png")
 
 
 # wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
@@ -19,14 +64,3 @@ driver.get url
 # }
 
 # improve this with callbacks
-sleep 20
-
-tweet = driver.find_element(:css, "div.permalink-tweet-container")
-tweet_media = driver.find_element(:css, "div.js-media-container")
-
-driver.save_screenshot("./tmp/twitter.png")
-
-full_image = ChunkyPNG::Image.from_file("./tmp/twitter.png")
-
-full_image.crop!(tweet.location.x + 1, tweet.location.y + 1, tweet.size.width - 2, tweet.size.height - 5)
-full_image.save("./screenshots/#{username_tweet_id}.png")
