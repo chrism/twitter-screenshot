@@ -3,6 +3,11 @@
 require 'selenium-webdriver'
 require 'oily_png'
 
+url = ARGV[0].to_s
+
+trimmed_url = url.sub("https://twitter.com/", "")
+username_tweet_id = trimmed_url.split("/status/").join("_")
+
 begin
   driver = Selenium::WebDriver.for :firefox 
   driver.get url
