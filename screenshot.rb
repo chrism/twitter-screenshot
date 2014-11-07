@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'selenium-webdriver'
-require 'chunky_png'
+require 'oily_png'
 
 url = ARGV[0].to_s
 
@@ -19,6 +19,8 @@ wait.until {
   tweet.displayed?
 }
 
+display_media = driver.find_element(:css, "button.display-this-media").click
+
 driver.execute_script('return arguments[0].style.transformOrigin = "top center"', tweet)
 driver.execute_script('return arguments[0].style.transform = "scale(2)"', tweet)
 driver.execute_script('return arguments[0].style.zIndex = "200000000"', tweet)
@@ -26,5 +28,7 @@ driver.execute_script('return arguments[0].style.zIndex = "200000000"', tweet)
 driver.save_screenshot("./tmp/twitter.png")
 
 full_image = ChunkyPNG::Image.from_file("./tmp/twitter.png")
-full_image.crop!(tweet.location.x + 10, tweet.location.y + 2, tweet.size.width - 10, tweet.size.height - 5)
+full_image.crop!(tweet.location.x + 10, tweet.location.y + 2, tweet.size.width - 20, tweet.size.height - 5)
 full_image.save("./screenshots/#{username_tweet_id}.png", :fast_rgb)
+
+driver.quit
