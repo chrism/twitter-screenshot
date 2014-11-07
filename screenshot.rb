@@ -19,7 +19,9 @@ wait.until {
   tweet.displayed?
 }
 
-display_media = driver.find_element(:css, "button.display-this-media").click
+if driver.find_elements(:css, "button.display-this-media").length > 0
+  driver.find_element(:css, "button.display-this-media").click
+end
 
 driver.execute_script('return arguments[0].style.transformOrigin = "top center"', tweet)
 driver.execute_script('return arguments[0].style.transform = "scale(2)"', tweet)
